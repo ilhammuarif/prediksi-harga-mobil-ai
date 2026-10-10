@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+serviceAccountKey.json
+.git
+.gitignore
+.secrets.baseline
+scratch/
+browser_recordings/
+*.docx

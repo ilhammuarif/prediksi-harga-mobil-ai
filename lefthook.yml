@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    detect-secrets:
+      tags: security
+      run: detect-secrets-hook --baseline .secrets.baseline {staged_files}

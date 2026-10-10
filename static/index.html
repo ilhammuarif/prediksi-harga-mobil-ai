@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Prediksi Harga Mobil Bekas</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-container">
+      <div class="brand">
+        <div class="brand-badge">Kecerdasan Buatan</div>
+        <h1 class="brand-title">Prediksi Harga Mobil Bekas</h1>
+        <p class="brand-desc">Sistem estimasi nilai pasar berbasis penalaran induktif Random Forest Regressor</p>
+      </div>
+      <div class="stats-pills">
+        <div class="stat-pill">
+          <span class="stat-value">2.000</span>
+          <span class="stat-label">Data Riil Pasar</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-value">17</span>
+          <span class="stat-label">Tipe Kendaraan</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-value">100</span>
+          <span class="stat-label">Pohon Keputusan</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-layout">
+    <!-- Panel Kiri: Form Input -->
+    <section class="card form-card" aria-labelledby="form-heading">
+      <div class="card-header">
+        <h2 id="form-heading" class="card-title">Parameter Kendaraan</h2>
+        <p class="card-subtitle">Masukkan spesifikasi mobil untuk menghitung nilai taksiran pasar.</p>
+      </div>
+
+      <form id="prediction-form" class="prediction-form" novalidate>
+        <div class="form-group">
+          <label for="merek-select" class="form-label">
+            Merek dan Tipe Mobil <span class="required">*</span>
+          </label>
+          <div class="select-wrapper">
+            <select id="merek-select" class="form-control" required>
+              <option value="" disabled selected>Pilih tipe mobil...</option>
+            </select>
+          </div>
+          <span id="merek-hint" class="form-hint">Tersedia 17 model populer bursa otomotif Indonesia.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="tahun-input" class="form-label">
+            Tahun Produksi <span class="required">*</span>
+          </label>
+          <input 
+            type="number" 
+            id="tahun-input" 
+            class="form-control" 
+            min="2010" 
+            max="2025" 
+            placeholder="Contoh: 2020" 
+            required
+          >
+          <div class="preset-chips" id="tahun-presets">
+            <span class="chip-label">Pilihan cepat:</span>
+            <button type="button" class="chip-btn" data-val="2017">2017</button>
+            <button type="button" class="chip-btn" data-val="2019">2019</button>
+            <button type="button" class="chip-btn" data-val="2021">2021</button>
+            <button type="button" class="chip-btn" data-val="2023">2023</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="km-input" class="form-label">
+            Jarak Tempuh Odometer (KM) <span class="required">*</span>
+          </label>
+          <input 
+            type="number" 
+            id="km-input" 
+            class="form-control" 
+            min="0" 
+            max="500000" 
+            step="1000" 
+            placeholder="Contoh: 45000" 
+            required
+          >
+          <div class="preset-chips" id="km-presets">
+            <span class="chip-label">Pilihan cepat:</span>
+            <button type="button" class="chip-btn" data-val="20000">20.000 KM</button>
+            <button type="button" class="chip-btn" data-val="50000">50.000 KM</button>
+            <button type="button" class="chip-btn" data-val="80000">80.000 KM</button>
+          </div>
+        </div>
+
+        <div id="form-error" class="alert alert-error" role="alert" style="display: none;"></div>
+
+        <button type="submit" id="btn-submit" class="btn btn-primary">
+          <span id="btn-text">Hitung Estimasi Harga</span>
+          <span id="btn-spinner" class="spinner" style="display: none;"></span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Panel Kanan: Hasil Prediksi -->
+    <section class="card result-card" aria-labelledby="result-heading">
+      <div class="card-header">
+        <h2 id="result-heading" class="card-title">Hasil Inferensi</h2>
+        <p class="card-subtitle">Estimasi nilai wajar dari agregasi ensemble 100 pohon keputusan.</p>
+      </div>
+
+      <!-- State Kosong (Default) -->
+      <div id="empty-state" class="state-container empty-state">
+        <div class="state-icon-box">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+            <circle cx="7" cy="18" r="2"></circle>
+            <circle cx="17" cy="18" r="2"></circle>
+            <path d="M5 6l2-3h10l2 3"></path>
+          </svg>
+        </div>
+        <h3 class="state-title">Menunggu Masukan Parameter</h3>
+        <p class="state-desc">Pilih merek mobil, masukkan tahun produksi dan jarak tempuh pada formulir di sebelah kiri, kemudian klik tombol untuk memproses prediksi.</p>
+      </div>
+
+      <!-- State Memuat (Loading) -->
+      <div id="loading-state" class="state-container loading-state" style="display: none;">
+        <div class="spinner-large"></div>
+        <h3 class="state-title">Menjalankan Inferensi Ensemble</h3>
+        <p class="state-desc">Mengevaluasi representasi fitur masukan pada 100 pohon keputusan...</p>
+      </div>
+
+      <!-- State Hasil Prediksi (Success) -->
+      <div id="success-state" class="success-content" style="display: none;">
+        <div class="summary-badge-row">
+          <span id="badge-merek" class="badge">Avanza</span>
+          <span id="badge-tahun" class="badge">Tahun 2020</span>
+          <span id="badge-km" class="badge">50.000 KM</span>
+        </div>
+
+        <div class="price-display-box">
+          <span class="price-label">Taksiran Nilai Pasar</span>
+          <div id="price-main" class="price-nominal">Rp 186.200.000</div>
+          <div class="price-range-info">
+            Rentang Toleransi Wajar: <strong id="price-range">Rp 178 Jt - Rp 194 Jt</strong>
+          </div>
+        </div>
+
+        <!-- Pembanding Riil dari Basis Pengetahuan -->
+        <div class="reference-section">
+          <h3 class="reference-title">Data Pembanding Pasar Riil (Mobil123.com)</h3>
+          <p class="reference-subtitle">3 entri pasar terdekat dengan karakteristik serupa dari basis data.</p>
+          <div id="reference-list" class="reference-cards-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bagian Bawah: Penjelajah Basis Data -->
+  <section class="container explorer-section">
+    <div class="card explorer-card">
+      <div class="explorer-header">
+        <div>
+          <h2 class="card-title">Katalog Model & Rentang Pasar</h2>
+          <p class="card-subtitle">Ringkasan 17 model kendaraan dalam basis data empiris 2.000 entri riil.</p>
+        </div>
+        <div class="search-box">
+          <input 
+            type="search" 
+            id="table-search" 
+            class="form-control search-input" 
+            placeholder="Cari merek mobil..."
+            aria-label="Cari merek mobil"
+          >
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table" id="models-table">
+          <thead>
+            <tr>
+              <th scope="col">Merek Mobil</th>
+              <th scope="col">Rentang Tahun</th>
+              <th scope="col">Jarak Tempuh (KM)</th>
+              <th scope="col">Rentang Harga Pasar</th>
+              <th scope="col">Rata-rata Harga</th>
+              <th scope="col">Jumlah Sampel</th>
+              <th scope="col">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="models-tbody">
+            <!-- Diisi secara dinamis via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p class="footer-text">
+        Tugas Mata Kuliah Kecerdasan Buatan (Artificial Intelligence) - Implementasi Agen Prediktif Mandiri Berbasis Web.
+      </p>
+      <p class="footer-subtext">
+        Sumber Data: Penjelajahan Web Terbuka Listing Otomotif Indonesia (Mobil123.com, Carmudi, OLX Autos) - 2.000 Baris Data Riil.
+      </p>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
