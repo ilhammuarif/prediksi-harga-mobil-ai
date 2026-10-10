@@ -29,3 +29,12 @@
 ## 3. Kebersihan & Verifikasi
 - Nol halaman kosong (*zero ghost pages*).
 - Nol paragraf menggantung (*orphan elimination* pada BAB I, BAB II, dan BAB VI).
+
+## 4. Kesiapan Hosting & Deployment
+- **Repositori Git**: [ilhammuarif/prediksi-harga-mobil-ai](https://github.com/ilhammuarif/prediksi-harga-mobil-ai) sudah terinisialisasi dan di-*push* ke remote GitHub.
+- **Keamanan**: Pre-commit hook `lefthook` + `detect-secrets` aktif; `.gitignore` mengecualikan `.env`, `.env.*`, dan secret files.
+- **Artefak Deployment**:
+  - `Dockerfile`: Multi-stage ready, Python 3.11-slim, expose port 8000.
+  - `Procfile` & `render.yaml`: Siap untuk 1-click deployment di Render.com.
+  - `.env.example`: Template environment variable untuk port dan host dinamis.
+
