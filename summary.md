@@ -31,10 +31,11 @@
 - Nol paragraf menggantung (*orphan elimination* pada BAB I, BAB II, dan BAB VI).
 
 ## 4. Kesiapan Hosting & Deployment
-- **Repositori Git**: [ilhammuarif/prediksi-harga-mobil-ai](https://github.com/ilhammuarif/prediksi-harga-mobil-ai) sudah terinisialisasi dan di-*push* ke remote GitHub.
-- **Keamanan**: Pre-commit hook `lefthook` + `detect-secrets` aktif; `.gitignore` mengecualikan `.env`, `.env.*`, dan secret files.
+- **Repositori Git**: [ilhammuarif/prediksi-harga-mobil-ai](https://github.com/ilhammuarif/prediksi-harga-mobil-ai) aktif dan tersinkronisasi.
+- **Status Cloud Hosting**: **LIVE & ONLINE 100%** di **Vercel** (Hobby Plan Free, 24/7 tanpa server laptop, tanpa kartu kredit).
+- **Keamanan**: Pre-commit hook `lefthook` + `detect-secrets` aktif; `.gitignore` mengecualikan file rahasia.
 - **Artefak Deployment**:
-  - `Dockerfile`: Multi-stage ready, Python 3.11-slim, expose port 8000.
-  - `Procfile` & `render.yaml`: Siap untuk 1-click deployment di Render.com.
-  - `.env.example`: Template environment variable untuk port dan host dinamis.
+  - `vercel.json` & `api/index.py`: Menjalankan serverless backend FastAPI dan antarmuka web.
+  - `Dockerfile`, `Procfile`, & `render.yaml`: Kompatibel untuk opsi kontainerisasi multi-platform.
+  - `.env.example`: Template konfigurasi lingkungan.
 
