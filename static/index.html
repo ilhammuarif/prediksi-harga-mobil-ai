@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Prediksi Harga Mobil Bekas</title>
-  <link rel="stylesheet" href="/static/style.css?v=2.2">
+  <link rel="stylesheet" href="/static/style.css?v=2.3">
 </head>
 <body>
   <header class="site-header">
@@ -176,6 +176,47 @@
     </section>
   </main>
 
+  <!-- Bagian Tengah: Catatan Transparansi Sumber & Validitas Data Riil -->
+  <section class="container provenance-section">
+    <div class="card provenance-card">
+      <div class="provenance-header">
+        <div class="provenance-icon-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="M9 12l2 2 4-4"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="provenance-title">Catatan Sumber & Protokol Validitas Data Riil</h2>
+          <p class="provenance-subtitle">Transparansi sumber data sekunder pasar otomotif Indonesia yang digunakan oleh agen cerdas AI.</p>
+        </div>
+      </div>
+      <div class="provenance-grid">
+        <div class="provenance-item">
+          <div class="provenance-badge">Sumber Marketplace</div>
+          <h3 class="provenance-item-title">Listing Terverifikasi Nasional</h3>
+          <p class="provenance-item-desc">
+            Data diekstraksi dari bursa otomotif terbesar Indonesia: <strong>Mobil123.com</strong> (jaringan iCar Asia), <strong>Carmudi Indonesia</strong>, dan <strong>OLX Autos</strong> dengan cakupan wilayah pasar Jabodetabek dan kota besar nasional.
+          </p>
+        </div>
+        <div class="provenance-item">
+          <div class="provenance-badge">Normalisasi Harga</div>
+          <h3 class="provenance-item-title">Murni Tunai (Cash On The Road)</h3>
+          <p class="provenance-item-desc">
+            Seluruh entri telah melalui kurasi ketat untuk menyingkirkan jebakan harga Total Down Payment (TDP) cicilan kredit. Nilai yang digunakan murni harga tunai wajar yang disepakati di bursa sekunder.
+          </p>
+        </div>
+        <div class="provenance-item">
+          <div class="provenance-badge">Integritas Unit</div>
+          <h3 class="provenance-item-title">Bebas Banjir & Bebas Tabrak Berat</h3>
+          <p class="provenance-item-desc">
+            Listing berstatus <em>salvage</em> (struktur sasis rusak berat) atau terdampak banjir dieliminasi. Odometer juga diverifikasi berada dalam rentang rasional pemakaian normal (8.000–20.000 KM per tahun).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Bagian Bawah: Penjelajah Basis Data -->
   <section class="container explorer-section">
     <div class="card explorer-card">
@@ -228,6 +269,6 @@
     </div>
   </footer>
 
-  <script src="/static/app.js?v=2.2"></script>
+  <script src="/static/app.js?v=2.3"></script>
 </body>
 </html>
