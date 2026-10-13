@@ -126,7 +126,6 @@ Prediksi_harga_kendaraan/
 ├── server.py                                ← Backend server web FastAPI (REST API & AI)
 ├── static/                                  ← Berkas antarmuka web (index.html, style.css, app.js)
 ├── run_web.bat                              ← Shortcut otomatis runner server dan pembuka browser
-├── app.py                                   ← Alternatif kode agen cerdas desktop GUI (Tkinter)
 ├── data_mobil.csv                           ← Basis data empiris 2.500 baris Mobil123, Carmudi, & OLX (21 model)
 ├── data_mobil.xlsx                          ← Basis data format Excel rapi untuk inspeksi manual
 ├── requirements.txt                         ← Daftar dependensi pustaka Python

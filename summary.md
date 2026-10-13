@@ -1,8 +1,8 @@
 # Summary Proyek Sistem Prediksi Harga Mobil Bekas (Kecerdasan Buatan)
 
 ## 1. Status Fitur
-- **Web Application (`server.py` & `static/`)**: Berfungsi penuh menggunakan backend FastAPI (asinkron REST API) dan Web UI responsif modern (HTML5, CSS murni dengan standar antislop WCAG AA, Vanilla JS). Memuat endpoint prediksi `/api/predict` lengkap dengan rentang toleransi variansi ensemble pohon keputusan (*uncertainty estimation*), live market statistics, dan visualisasi tren harga pasar.
-- **Desktop Application (`app.py`)**: Tersedia penuh sebagai alternatif aplikasi desktop mandiri berbasis Tkinter GUI dan Matplotlib tanpa dependensi peramban.
+- **Web Application (`server.py` & `static/`)**: Berfungsi penuh menggunakan backend FastAPI (asinkron REST API) dan Web UI responsif modern (HTML5, CSS murni dengan standar antislop WCAG AA, Vanilla JS). Memuat endpoint prediksi `/api/predict` lengkap dengan estimasi rentang variansi ensemble pohon keputusan (*uncertainty estimation*), live market statistics dinamis real-time (otomatis sinkron dengan isi dataset), dan visualisasi tren harga pasar.
+- **Transisi Arsitektur**: Modul desktop lokal Tkinter (`app.py`) telah dihapus secara resmi karena arsitektur sistem telah sepenuhnya beralih ke aplikasi web modern (*cloud-ready*) yang di-deploy di Vercel.
 - **Runner Shortcut (`run_web.bat`)**: Skrip otomatisasi sekali klik untuk meluncurkan server uvicorn lokal dan membuka peramban web di `http://127.0.0.1:8000`.
 - **Dataset (`data_mobil.csv` & `data_mobil.xlsx`)**: 2.500 baris data riil pasar valid terverifikasi (21 tipe model kendaraan terpopuler Indonesia tahun perakitan 2015 s.d. 2023). Ditambahkan 4 tipe mobil baru: Terios (125 baris), Mobilio (125 baris), BR-V (125 baris), dan Sienta (125 baris). Evaluasi model Random Forest: $R^2 = 0.9836$, MAE = Rp 7,25 Juta.
 - **Laporan Word Resmi (`Laporan_Sistem_Prediksi_Harga_Mobil.docx`)**:

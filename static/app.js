@@ -32,7 +32,36 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       metadataCache = data;
 
+      // Update Live Header Stats secara dinamis
+      const statTotalData = document.getElementById("stat-total-data");
+      const statTotalMerek = document.getElementById("stat-total-merek");
+      const statTotalTrees = document.getElementById("stat-total-trees");
+      if (statTotalData && data.total_data) {
+        statTotalData.textContent = formatNumber(data.total_data);
+      }
+      if (statTotalMerek && data.total_merek) {
+        statTotalMerek.textContent = data.total_merek;
+      }
+      if (statTotalTrees && data.total_trees) {
+        statTotalTrees.textContent = data.total_trees;
+      }
+
+      // Update Form Hint & Explorer Subtitle secara dinamis
+      const merekHint = document.getElementById("merek-hint");
+      if (merekHint && data.total_merek) {
+        merekHint.textContent = `Tersedia ${data.total_merek} model populer bursa otomotif Indonesia.`;
+      }
+      const catalogSubtitle = document.getElementById("catalog-subtitle");
+      if (catalogSubtitle && data.total_merek && data.total_data) {
+        catalogSubtitle.textContent = `Ringkasan ${data.total_merek} model kendaraan dalam basis data empiris ${formatNumber(data.total_data)} entri riil.`;
+      }
+      const footerSubtext = document.getElementById("footer-subtext");
+      if (footerSubtext && data.total_data) {
+        footerSubtext.textContent = `Sumber Data: Penjelajahan Web Terbuka Listing Otomotif Indonesia (Mobil123.com, Carmudi, OLX Autos) - ${formatNumber(data.total_data)} Baris Data Riil.`;
+      }
+
       // Isi dropdown merek
+      merekSelect.innerHTML = '<option value="" disabled selected>Pilih tipe mobil...</option>';
       data.daftar_merek.forEach((merek) => {
         const opt = document.createElement("option");
         opt.value = merek;

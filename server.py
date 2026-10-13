@@ -89,7 +89,10 @@ def format_rupiah(nominal_juta: float) -> str:
 def serve_index():
     index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
-        return FileResponse(index_file)
+        return FileResponse(
+            index_file,
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
     return {"message": "Sistem Prediksi Harga Mobil Bekas siap. static/index.html belum dibuat."}
 
 
@@ -99,6 +102,7 @@ def get_metadata():
         "status": "success",
         "total_data": len(df),
         "total_merek": len(DAFTAR_MEREK),
+        "total_trees": getattr(model, "n_estimators", 100),
         "daftar_merek": DAFTAR_MEREK,
         "statistik_merek": STATS_PER_MEREK,
         "rentang_tahun": [int(df["tahun"].min()), int(df["tahun"].max())],

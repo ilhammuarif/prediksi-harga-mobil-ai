@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Prediksi Harga Mobil Bekas</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css?v=2.1">
 </head>
 <body>
   <header class="site-header">
@@ -16,15 +16,15 @@
       </div>
       <div class="stats-pills">
         <div class="stat-pill">
-          <span class="stat-value">2.500</span>
+          <span id="stat-total-data" class="stat-value">2.500</span>
           <span class="stat-label">Data Riil Pasar</span>
         </div>
         <div class="stat-pill">
-          <span class="stat-value">21</span>
+          <span id="stat-total-merek" class="stat-value">21</span>
           <span class="stat-label">Tipe Kendaraan</span>
         </div>
         <div class="stat-pill">
-          <span class="stat-value">100</span>
+          <span id="stat-total-trees" class="stat-value">100</span>
           <span class="stat-label">Pohon Keputusan</span>
         </div>
       </div>
@@ -165,7 +165,7 @@
       <div class="explorer-header">
         <div>
           <h2 class="card-title">Katalog Model & Rentang Pasar</h2>
-          <p class="card-subtitle">Ringkasan 21 model kendaraan dalam basis data empiris 2.500 entri riil.</p>
+          <p id="catalog-subtitle" class="card-subtitle">Ringkasan 21 model kendaraan dalam basis data empiris 2.500 entri riil.</p>
         </div>
         <div class="search-box">
           <input 
@@ -204,12 +204,12 @@
       <p class="footer-text">
         Tugas Mata Kuliah Kecerdasan Buatan (Artificial Intelligence) - Implementasi Agen Prediktif Mandiri Berbasis Web.
       </p>
-      <p class="footer-subtext">
+      <p id="footer-subtext" class="footer-subtext">
         Sumber Data: Penjelajahan Web Terbuka Listing Otomotif Indonesia (Mobil123.com, Carmudi, OLX Autos) - 2.500 Baris Data Riil.
       </p>
     </div>
   </footer>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=2.1"></script>
 </body>
 </html>
