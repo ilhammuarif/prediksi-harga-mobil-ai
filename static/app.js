@@ -121,14 +121,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const modelList = kategoriMerek[merek] || [];
 
       const accordionItem = document.createElement("div");
-      accordionItem.className = `brand-accordion-item${index === 0 ? " is-open" : ""}`;
+      accordionItem.className = "brand-accordion-item";
       accordionItem.setAttribute("data-brand", merek.toLowerCase());
 
       // Header Akordeon
       const headerBtn = document.createElement("button");
       headerBtn.type = "button";
       headerBtn.className = "brand-accordion-header";
-      headerBtn.setAttribute("aria-expanded", index === 0 ? "true" : "false");
+      headerBtn.setAttribute("aria-expanded", "false");
       headerBtn.innerHTML = `
         <div class="brand-header-left">
           <span class="brand-name">${escapeHtml(merek)}</span>
@@ -263,7 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (query === "") {
           item.style.display = "";
-          // Biarkan item pertama tetap terbuka
+          item.classList.remove("is-open");
+          const header = item.querySelector(".brand-accordion-header");
+          if (header) header.setAttribute("aria-expanded", "false");
         } else if (hasMatchingModel) {
           item.style.display = "";
           item.classList.add("is-open");
