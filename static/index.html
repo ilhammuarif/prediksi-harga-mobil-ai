@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Prediksi Harga Mobil Bekas</title>
-  <link rel="stylesheet" href="/static/style.css?v=2.1">
+  <link rel="stylesheet" href="/static/style.css?v=2.2">
 </head>
 <body>
   <header class="site-header">
@@ -20,7 +20,11 @@
           <span class="stat-label">Data Riil Pasar</span>
         </div>
         <div class="stat-pill">
-          <span id="stat-total-merek" class="stat-value">21</span>
+          <span id="stat-total-merek" class="stat-value">5</span>
+          <span class="stat-label">Kategori Merek</span>
+        </div>
+        <div class="stat-pill">
+          <span id="stat-total-tipe" class="stat-value">21</span>
           <span class="stat-label">Tipe Kendaraan</span>
         </div>
         <div class="stat-pill">
@@ -36,20 +40,32 @@
     <section class="card form-card" aria-labelledby="form-heading">
       <div class="card-header">
         <h2 id="form-heading" class="card-title">Parameter Kendaraan</h2>
-        <p class="card-subtitle">Masukkan spesifikasi mobil untuk menghitung nilai taksiran pasar.</p>
+        <p class="card-subtitle">Pilih kategori merek pabrikan dan tipe mobil untuk menghitung nilai taksiran pasar.</p>
       </div>
 
       <form id="prediction-form" class="prediction-form" novalidate>
         <div class="form-group">
           <label for="merek-select" class="form-label">
-            Merek dan Tipe Mobil <span class="required">*</span>
+            Kategori Merek Pabrikan <span class="required">*</span>
           </label>
           <div class="select-wrapper">
             <select id="merek-select" class="form-control" required>
-              <option value="" disabled selected>Pilih tipe mobil...</option>
+              <option value="" disabled selected>Pilih kategori merek...</option>
             </select>
           </div>
-          <span id="merek-hint" class="form-hint">Tersedia 21 model populer bursa otomotif Indonesia.</span>
+          <span id="merek-hint" class="form-hint">Tersedia 5 merek pabrikan bursa otomotif Indonesia.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="tipe-select" class="form-label">
+            Tipe / Model Mobil <span class="required">*</span>
+          </label>
+          <div class="select-wrapper">
+            <select id="tipe-select" class="form-control" required disabled>
+              <option value="" disabled selected>Pilih merek terlebih dahulu...</option>
+            </select>
+          </div>
+          <span id="tipe-hint" class="form-hint">Model mobil akan muncul otomatis sesuai kategori merek di atas.</span>
         </div>
 
         <div class="form-group">
@@ -123,7 +139,7 @@
           </svg>
         </div>
         <h3 class="state-title">Menunggu Masukan Parameter</h3>
-        <p class="state-desc">Pilih merek mobil, masukkan tahun produksi dan jarak tempuh pada formulir di sebelah kiri, kemudian klik tombol untuk memproses prediksi.</p>
+        <p class="state-desc">Pilih kategori merek dan tipe mobil, masukkan tahun produksi serta jarak tempuh pada formulir di sebelah kiri, kemudian klik tombol untuk memproses prediksi.</p>
       </div>
 
       <!-- State Memuat (Loading) -->
@@ -136,7 +152,8 @@
       <!-- State Hasil Prediksi (Success) -->
       <div id="success-state" class="success-content" style="display: none;">
         <div class="summary-badge-row">
-          <span id="badge-merek" class="badge">Avanza</span>
+          <span id="badge-merek" class="badge">Toyota</span>
+          <span id="badge-tipe" class="badge">Avanza</span>
           <span id="badge-tahun" class="badge">Tahun 2020</span>
           <span id="badge-km" class="badge">50.000 KM</span>
         </div>
@@ -165,15 +182,15 @@
       <div class="explorer-header">
         <div>
           <h2 class="card-title">Katalog Model & Rentang Pasar</h2>
-          <p id="catalog-subtitle" class="card-subtitle">Ringkasan 21 model kendaraan dalam basis data empiris 2.500 entri riil.</p>
+          <p id="catalog-subtitle" class="card-subtitle">Ringkasan 5 kategori merek dan 21 tipe mobil dalam basis data empiris 2.500 entri riil.</p>
         </div>
         <div class="search-box">
           <input 
             type="search" 
             id="table-search" 
             class="form-control search-input" 
-            placeholder="Cari merek mobil..."
-            aria-label="Cari merek mobil"
+            placeholder="Cari merek atau tipe mobil..."
+            aria-label="Cari merek atau tipe mobil"
           >
         </div>
       </div>
@@ -182,7 +199,8 @@
         <table class="data-table" id="models-table">
           <thead>
             <tr>
-              <th scope="col">Merek Mobil</th>
+              <th scope="col">Kategori Merek</th>
+              <th scope="col">Tipe Mobil</th>
               <th scope="col">Rentang Tahun</th>
               <th scope="col">Jarak Tempuh (KM)</th>
               <th scope="col">Rentang Harga Pasar</th>
@@ -210,6 +228,6 @@
     </div>
   </footer>
 
-  <script src="/static/app.js?v=2.1"></script>
+  <script src="/static/app.js?v=2.2"></script>
 </body>
 </html>

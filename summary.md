@@ -1,10 +1,10 @@
 # Summary Proyek Sistem Prediksi Harga Mobil Bekas (Kecerdasan Buatan)
 
 ## 1. Status Fitur
-- **Web Application (`server.py` & `static/`)**: Berfungsi penuh menggunakan backend FastAPI (asinkron REST API) dan Web UI responsif modern (HTML5, CSS murni dengan standar antislop WCAG AA, Vanilla JS). Memuat endpoint prediksi `/api/predict` lengkap dengan estimasi rentang variansi ensemble pohon keputusan (*uncertainty estimation*), live market statistics dinamis real-time (otomatis sinkron dengan isi dataset), dan visualisasi tren harga pasar.
+- **Web Application (`server.py` & `static/`)**: Berfungsi penuh menggunakan backend FastAPI (asinkron REST API) dan Web UI responsif modern (HTML5, CSS murni dengan standar antislop WCAG AA, Vanilla JS). Memuat relasi hierarkis 5 Kategori Merek (Toyota, Honda, Daihatsu, Mitsubishi, Suzuki) dengan 21 Tipe Kendaraan melalui *cascading dropdown*. Memuat endpoint prediksi `/api/predict` lengkap dengan estimasi rentang variansi ensemble pohon keputusan (*uncertainty estimation*), live market statistics dinamis real-time, dan visualisasi tren harga pasar.
 - **Transisi Arsitektur**: Modul desktop lokal Tkinter (`app.py`) telah dihapus secara resmi karena arsitektur sistem telah sepenuhnya beralih ke aplikasi web modern (*cloud-ready*) yang di-deploy di Vercel.
 - **Runner Shortcut (`run_web.bat`)**: Skrip otomatisasi sekali klik untuk meluncurkan server uvicorn lokal dan membuka peramban web di `http://127.0.0.1:8000`.
-- **Dataset (`data_mobil.csv` & `data_mobil.xlsx`)**: 2.500 baris data riil pasar valid terverifikasi (21 tipe model kendaraan terpopuler Indonesia tahun perakitan 2015 s.d. 2023). Ditambahkan 4 tipe mobil baru: Terios (125 baris), Mobilio (125 baris), BR-V (125 baris), dan Sienta (125 baris). Evaluasi model Random Forest: $R^2 = 0.9836$, MAE = Rp 7,25 Juta.
+- **Dataset (`data_mobil.csv` & `data_mobil.xlsx`)**: 2.500 baris data riil pasar valid terverifikasi dengan pemisahan kolom eksplisit `merek` (pabrikan) dan `tipe` (model). Terbagi ke dalam 5 pabrikan utama: Toyota (950 baris, 8 model), Honda (719 baris, 6 model), Daihatsu (478 baris, 4 model), Mitsubishi (235 baris, 2 model), dan Suzuki (118 baris, 1 model). Pipeline Scikit-Learn Random Forest: $R^2 = 0.9835$, MAE = Rp 7,24 Juta.
 - **Laporan Word Resmi (`Laporan_Sistem_Prediksi_Harga_Mobil.docx`)**:
   - Format standar akademik: Times New Roman 12pt, batas margin 4-3-3-3 cm, spasi 1.5, inden paragraf 1 cm, warna teks 100% hitam.
   - Penomoran halaman resmi 3 seksi:

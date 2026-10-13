@@ -209,6 +209,24 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
+.form-control:disabled {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.brand-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background-color: #EFF6FF;
+  color: var(--color-accent);
+}
+
 .form-hint {
   display: block;
   font-size: 0.8rem;

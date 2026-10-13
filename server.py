@@ -1,19 +1,22 @@
 import os
 import numpy as np
 import pandas as pd
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
 
 # Inisialisasi Aplikasi FastAPI
 app = FastAPI(
     title="Sistem Prediksi Harga Mobil Bekas",
-    description="API Inferensi Kecerdasan Buatan menggunakan Random Forest Regressor",
-    version="2.0.0"
+    description="API Inferensi Kecerdasan Buatan menggunakan Random Forest Regressor Berbasis Kategori Merek & Tipe Kendaraan",
+    version="2.1.0"
 )
 
 # Konfigurasi CORS
@@ -34,21 +37,42 @@ if not os.path.exists(DATA_PATH):
     raise FileNotFoundError(f"File dataset tidak ditemukan di: {DATA_PATH}")
 
 df = pd.read_csv(DATA_PATH)
+
 DAFTAR_MEREK = sorted(df["merek"].unique().tolist())
+DAFTAR_TIPE = sorted(df["tipe"].unique().tolist())
 
-# Melatih model Random Forest
-df_encoded = pd.get_dummies(df, columns=["merek"])
-X = df_encoded.drop("harga_juta", axis=1)
-y = df_encoded["harga_juta"]
+# Pemetaan relasi hierarkis Merek (Pabrikan) -> Tipe Mobil
+KATEGORI_MEREK: Dict[str, List[str]] = {}
+for m in DAFTAR_MEREK:
+    KATEGORI_MEREK[m] = sorted(df[df["merek"] == m]["tipe"].unique().tolist())
 
-model = RandomForestRegressor(n_estimators=100, random_state=42)
+TIPE_TO_MEREK: Dict[str, str] = dict(zip(df["tipe"], df["merek"]))
+
+# Melatih Pipeline Random Forest
+X = df[["merek", "tipe", "tahun", "kilometer"]]
+y = df["harga_juta"]
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("cat", OneHotEncoder(handle_unknown="ignore"), ["merek", "tipe"]),
+        ("num", "passthrough", ["tahun", "kilometer"])
+    ]
+)
+
+model = Pipeline([
+    ("preprocessor", preprocessor),
+    ("regressor", RandomForestRegressor(n_estimators=100, random_state=42))
+])
 model.fit(X, y)
 
-# Pre-kalkulasi statistik per merek
-STATS_PER_MEREK: Dict[str, Dict[str, Any]] = {}
-for m in DAFTAR_MEREK:
-    sub = df[df["merek"] == m]
-    STATS_PER_MEREK[m] = {
+# Pre-kalkulasi statistik per tipe kendaraan
+STATS_PER_TIPE: Dict[str, Dict[str, Any]] = {}
+for t in DAFTAR_TIPE:
+    sub = df[df["tipe"] == t]
+    m_val = str(sub["merek"].iloc[0])
+    STATS_PER_TIPE[t] = {
+        "merek": m_val,
+        "tipe": t,
         "min_tahun": int(sub["tahun"].min()),
         "max_tahun": int(sub["tahun"].max()),
         "min_km": int(sub["kilometer"].min()),
@@ -61,7 +85,8 @@ for m in DAFTAR_MEREK:
 
 
 class PredictRequest(BaseModel):
-    merek: str = Field(..., description="Nama tipe/merek mobil")
+    merek: Optional[str] = Field(None, description="Nama merek pabrikan (misal: Toyota, Honda)")
+    tipe: str = Field(..., description="Nama tipe/model mobil (misal: Avanza, Brio)")
     tahun: int = Field(..., ge=2010, le=2025, description="Tahun produksi mobil (2010 - 2025)")
     kilometer: int = Field(..., ge=0, le=500000, description="Jarak tempuh odometer (0 - 500.000 KM)")
 
@@ -69,6 +94,7 @@ class PredictRequest(BaseModel):
 class PredictResponse(BaseModel):
     status: str
     merek: str
+    tipe: str
     tahun: int
     kilometer: int
     estimasi_juta: float
@@ -102,35 +128,55 @@ def get_metadata():
         "status": "success",
         "total_data": len(df),
         "total_merek": len(DAFTAR_MEREK),
-        "total_trees": getattr(model, "n_estimators", 100),
+        "total_tipe": len(DAFTAR_TIPE),
+        "total_trees": 100,
         "daftar_merek": DAFTAR_MEREK,
-        "statistik_merek": STATS_PER_MEREK,
+        "daftar_tipe": DAFTAR_TIPE,
+        "kategori_merek": KATEGORI_MEREK,
+        "statistik_tipe": STATS_PER_TIPE,
         "rentang_tahun": [int(df["tahun"].min()), int(df["tahun"].max())],
     }
 
 
 @app.post("/api/predict", response_model=PredictResponse)
 def predict_price(req: PredictRequest):
-    merek_clean = req.merek.strip().title()
-    if merek_clean not in DAFTAR_MEREK:
-        # Coba periksa kesamaan case insensitive
-        matched = [m for m in DAFTAR_MEREK if m.lower() == merek_clean.lower()]
-        if matched:
-            merek_clean = matched[0]
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Merek '{req.merek}' tidak terdaftar dalam basis pengetahuan. Pilihan tersedia: {', '.join(DAFTAR_MEREK)}"
-            )
+    tipe_raw = req.tipe.strip()
+    
+    # Validasi dan resolusi tipe
+    matched_tipe = [t for t in DAFTAR_TIPE if t.lower() == tipe_raw.lower()]
+    if not matched_tipe:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Tipe mobil '{req.tipe}' tidak ditemukan. Pilihan tersedia: {', '.join(DAFTAR_TIPE)}"
+        )
+    tipe_clean = matched_tipe[0]
+    
+    # Resolusi merek otomatis bila tidak disertakan atau berbeda penulisan
+    merek_clean = TIPE_TO_MEREK.get(tipe_clean, "Toyota")
+    if req.merek:
+        req_merek_clean = req.merek.strip().title()
+        if req_merek_clean in DAFTAR_MEREK:
+            # Periksa kecocokan merek dengan tipe
+            if tipe_clean not in KATEGORI_MEREK.get(req_merek_clean, []):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Tipe '{tipe_clean}' bukan bagian dari kategori merek '{req_merek_clean}'. Model untuk {req_merek_clean}: {', '.join(KATEGORI_MEREK[req_merek_clean])}"
+                )
+            merek_clean = req_merek_clean
 
-    # Siapkan vektor fitur sesuai skema training
-    input_df = pd.DataFrame({"tahun": [req.tahun], "kilometer": [req.kilometer]})
-    merek_enc = pd.get_dummies(pd.DataFrame({"merek": [merek_clean]}), columns=["merek"])
-    input_df = pd.concat([input_df, merek_enc], axis=1).reindex(columns=X.columns, fill_value=0)
+    # Siapkan DataFrame masukan untuk pipeline
+    input_df = pd.DataFrame([{
+        "merek": merek_clean,
+        "tipe": tipe_clean,
+        "tahun": req.tahun,
+        "kilometer": req.kilometer
+    }])
 
-    # Ekstrak inferensi dari seluruh 100 pohon keputusan untuk analisis ketidakpastian
-    input_values = input_df.values
-    tree_predictions = np.array([tree.predict(input_values)[0] for tree in model.estimators_])
+    # Transformasi dan inferensi ensemble pohon keputusan
+    X_trans = model.named_steps["preprocessor"].transform(input_df)
+    regressor = model.named_steps["regressor"]
+    tree_predictions = np.array([tree.predict(X_trans)[0] for tree in regressor.estimators_])
+    
     mean_val = float(tree_predictions.mean())
     std_val = float(tree_predictions.std())
 
@@ -140,7 +186,7 @@ def predict_price(req: PredictRequest):
     atas_val = round(mean_val + toleransi, 1)
 
     # Cari 3 sampel pembanding terdekat dari dataset riil
-    sub = df[df["merek"] == merek_clean].copy()
+    sub = df[df["tipe"] == tipe_clean].copy()
     sub["selisih_tahun"] = (sub["tahun"] - req.tahun).abs()
     sub["selisih_km"] = (sub["kilometer"] - req.kilometer).abs() / 10000.0
     sub["jarak_skor"] = sub["selisih_tahun"] * 2.0 + sub["selisih_km"]
@@ -150,6 +196,7 @@ def predict_price(req: PredictRequest):
     for _, row in pembanding.iterrows():
         referensi_list.append({
             "merek": str(row["merek"]),
+            "tipe": str(row["tipe"]),
             "tahun": int(row["tahun"]),
             "kilometer": int(row["kilometer"]),
             "harga_juta": int(row["harga_juta"]),
@@ -159,6 +206,7 @@ def predict_price(req: PredictRequest):
     return PredictResponse(
         status="success",
         merek=merek_clean,
+        tipe=tipe_clean,
         tahun=req.tahun,
         kilometer=req.kilometer,
         estimasi_juta=round(mean_val, 1),
@@ -172,12 +220,17 @@ def predict_price(req: PredictRequest):
 
 
 @app.get("/api/dataset")
-def get_dataset(merek: str = None, limit: int = 100):
+def get_dataset(merek: Optional[str] = None, tipe: Optional[str] = None, limit: int = 100):
     filtered_df = df
     if merek:
-        merek_clean = merek.strip().title()
-        if merek_clean in DAFTAR_MEREK:
-            filtered_df = df[df["merek"] == merek_clean]
+        m_clean = merek.strip().title()
+        if m_clean in DAFTAR_MEREK:
+            filtered_df = filtered_df[filtered_df["merek"] == m_clean]
+    if tipe:
+        t_clean = tipe.strip()
+        matched = [t for t in DAFTAR_TIPE if t.lower() == t_clean.lower()]
+        if matched:
+            filtered_df = filtered_df[filtered_df["tipe"] == matched[0]]
 
     records = filtered_df.head(limit).to_dict(orient="records")
     return {
@@ -192,7 +245,8 @@ def health_check():
     return {
         "status": "ok",
         "total_data": len(df),
-        "total_merek": len(DAFTAR_MEREK)
+        "total_merek": len(DAFTAR_MEREK),
+        "total_tipe": len(DAFTAR_TIPE)
     }
 
 # Mount static folder
@@ -203,5 +257,3 @@ if __name__ == "__main__":
     host = os.environ.get("HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", "8000"))
     uvicorn.run("server:app", host=host, port=port, reload=False)
-
-

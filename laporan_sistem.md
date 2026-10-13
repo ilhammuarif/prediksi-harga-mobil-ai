@@ -27,8 +27,8 @@ KECERDASAN BUATAN (ARTIFICIAL INTELLIGENCE)
 * **Bahasa Pemrograman**: Python 3.10+
 * **Model Penalaran AI**: scikit-learn (`RandomForestRegressor` - 100 pohon keputusan)
 * **Manipulasi Basis Pengetahuan**: pandas & numpy
-* **Visualisasi Analisis Data**: matplotlib
-* **Antarmuka Desktop**: Tkinter (Pustaka Standar Python)
+* **Visualisasi Analisis Data**: matplotlib / chart dynamic frontend
+* **Antarmuka Utama**: Web App Modern Responsif (FastAPI + HTML5/CSS/Vanilla JS)
 
 ---
 
@@ -48,17 +48,13 @@ Dataset yang digunakan sebagai basis pengetahuan sistem adalah **100% data riil 
   1. *Normalisasi Harga Tunai (Cash OTR)*: Mengeliminasi listing dengan harga manipulatif (seperti pencantuman nilai Total Down Payment / TDP cicilan murah). Seluruh entri dikonversi murni ke nilai jual beli kontan (On The Road).
   2. *Screening Kondisi Normal*: Mengecualikan kendaraan berstatus *salvage* (bekas tabrakan berat struktur rangka) atau terdampak banjir untuk menjaga integritas nilai pasar wajar (*fair market value*).
   3. *Verifikasi Rasionalitas Odometer*: Memfilter kilometer agar konsisten dengan laju pemakaian normal kendaraan keluarga di Indonesia ($8.000\text{ s.d. }20.000\text{ KM/tahun}$).
-* **Jumlah Data**: **2.500 entri data riil**, mencakup **21 model kendaraan** terpopuler di Indonesia (117 s.d. 125 data per model terdistribusi seimbang dari tahun 2015 s.d. 2023).
-* **Validitas Data**: Setiap baris memuat tahun pembuatan asli, jarak tempuh kilometer aktual dari odometer, dan harga penawaran riil dalam jutaan Rupiah sesuai kondisi pasar pasar otomotif sekunder.
-
-### 21 Tipe Model Berdasarkan Hierarki Pasar Indonesia:
-1. **LCGC & City Car**: Ayla (75-151 Jt), Agya (83-185 Jt), Calya (90-159 Jt), Sigra (92-151 Jt), Brio (98-187 Jt)
-2. **Hatchback**: Jazz (125-288 Jt), Yaris (155-298 Jt)
-3. **Low MPV**: Xenia (109-222 Jt), Avanza (115-240 Jt), Ertiga (115-242 Jt), Mobilio (111-195 Jt), Xpander (176-307 Jt)
-4. **Compact MPV**: Sienta (141-230 Jt)
-5. **Compact SUV & Crossover**: Rush (146-272 Jt), Terios (133-238 Jt), BR-V (147-268 Jt), HR-V (165-373 Jt)
-6. **Medium SUV & MPV**: CR-V (185-503 Jt), Innova (232-510 Jt)
-7. **Big SUV (Ladder Frame)**: Fortuner (325-600 Jt), Pajero (353-635 Jt)
+* **Jumlah Data**: **2.500 entri data riil**, mencakup **5 Kategori Merek Pabrikan** dan **21 Tipe Model Kendaraan** terpopuler di Indonesia:
+  1. **Toyota** (950 data): Agya, Avanza, Calya, Fortuner, Innova, Rush, Sienta, Yaris
+  2. **Honda** (719 data): BR-V, Brio, CR-V, HR-V, Jazz, Mobilio
+  3. **Daihatsu** (478 data): Ayla, Sigra, Terios, Xenia
+  4. **Mitsubishi** (235 data): Pajero, Xpander
+  5. **Suzuki** (118 data): Ertiga
+* **Validitas Data**: Setiap baris memuat kategori merek pabrikan, tipe model spesifik, tahun pembuatan asli, jarak tempuh kilometer aktual dari odometer, dan harga penawaran riil dalam jutaan Rupiah.
 
 ---
 

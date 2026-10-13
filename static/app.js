@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("prediction-form");
   const merekSelect = document.getElementById("merek-select");
+  const tipeSelect = document.getElementById("tipe-select");
+  const tipeHint = document.getElementById("tipe-hint");
   const tahunInput = document.getElementById("tahun-input");
   const kmInput = document.getElementById("km-input");
   const btnSubmit = document.getElementById("btn-submit");
@@ -13,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const successState = document.getElementById("success-state");
 
   const badgeMerek = document.getElementById("badge-merek");
+  const badgeTipe = document.getElementById("badge-tipe");
   const badgeTahun = document.getElementById("badge-tahun");
   const badgeKm = document.getElementById("badge-km");
   const priceMain = document.getElementById("price-main");
@@ -35,12 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update Live Header Stats secara dinamis
       const statTotalData = document.getElementById("stat-total-data");
       const statTotalMerek = document.getElementById("stat-total-merek");
+      const statTotalTipe = document.getElementById("stat-total-tipe");
       const statTotalTrees = document.getElementById("stat-total-trees");
+
       if (statTotalData && data.total_data) {
         statTotalData.textContent = formatNumber(data.total_data);
       }
       if (statTotalMerek && data.total_merek) {
         statTotalMerek.textContent = data.total_merek;
+      }
+      if (statTotalTipe && data.total_tipe) {
+        statTotalTipe.textContent = data.total_tipe;
       }
       if (statTotalTrees && data.total_trees) {
         statTotalTrees.textContent = data.total_trees;
@@ -49,19 +57,19 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update Form Hint & Explorer Subtitle secara dinamis
       const merekHint = document.getElementById("merek-hint");
       if (merekHint && data.total_merek) {
-        merekHint.textContent = `Tersedia ${data.total_merek} model populer bursa otomotif Indonesia.`;
+        merekHint.textContent = `Tersedia ${data.total_merek} merek pabrikan bursa otomotif Indonesia.`;
       }
       const catalogSubtitle = document.getElementById("catalog-subtitle");
-      if (catalogSubtitle && data.total_merek && data.total_data) {
-        catalogSubtitle.textContent = `Ringkasan ${data.total_merek} model kendaraan dalam basis data empiris ${formatNumber(data.total_data)} entri riil.`;
+      if (catalogSubtitle && data.total_merek && data.total_tipe && data.total_data) {
+        catalogSubtitle.textContent = `Ringkasan ${data.total_merek} kategori merek dan ${data.total_tipe} tipe mobil dalam basis data empiris ${formatNumber(data.total_data)} entri riil.`;
       }
       const footerSubtext = document.getElementById("footer-subtext");
       if (footerSubtext && data.total_data) {
         footerSubtext.textContent = `Sumber Data: Penjelajahan Web Terbuka Listing Otomotif Indonesia (Mobil123.com, Carmudi, OLX Autos) - ${formatNumber(data.total_data)} Baris Data Riil.`;
       }
 
-      // Isi dropdown merek
-      merekSelect.innerHTML = '<option value="" disabled selected>Pilih tipe mobil...</option>';
+      // Isi dropdown Kategori Merek
+      merekSelect.innerHTML = '<option value="" disabled selected>Pilih kategori merek...</option>';
       data.daftar_merek.forEach((merek) => {
         const opt = document.createElement("option");
         opt.value = merek;
@@ -70,28 +78,51 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Render tabel katalog model
-      renderModelsTable(data.statistik_merek);
+      renderModelsTable(data.statistik_tipe);
     } catch (err) {
       showError("Koneksi ke backend gagal: " + err.message);
     }
   }
 
+  // --- Relasi Hierarkis: Pilih Merek -> Tampilkan Tipe Mobil ---
+  merekSelect.addEventListener("change", () => {
+    const selectedMerek = merekSelect.value;
+    if (!metadataCache || !metadataCache.kategori_merek) return;
+
+    const availableModels = metadataCache.kategori_merek[selectedMerek] || [];
+    tipeSelect.innerHTML = '<option value="" disabled selected>Pilih tipe mobil...</option>';
+    
+    availableModels.forEach((tipe) => {
+      const opt = document.createElement("option");
+      opt.value = tipe;
+      opt.textContent = tipe;
+      tipeSelect.appendChild(opt);
+    });
+
+    tipeSelect.disabled = false;
+    if (tipeHint) {
+      tipeHint.textContent = `Tersedia ${availableModels.length} tipe mobil untuk merek ${selectedMerek}.`;
+    }
+    tipeSelect.focus();
+  });
+
   // --- Render Tabel Katalog ---
   function renderModelsTable(stats) {
     modelsTbody.innerHTML = "";
-    Object.keys(stats).forEach((merek) => {
-      const item = stats[merek];
+    Object.keys(stats).forEach((tipe) => {
+      const item = stats[tipe];
       const tr = document.createElement("tr");
 
       tr.innerHTML = `
-        <td><strong>${escapeHtml(merek)}</strong></td>
+        <td><span class="brand-tag">${escapeHtml(item.merek)}</span></td>
+        <td><strong>${escapeHtml(item.tipe)}</strong></td>
         <td>${item.min_tahun} - ${item.max_tahun}</td>
         <td>${formatNumber(item.min_km)} - ${formatNumber(item.max_km)} KM</td>
         <td>Rp ${item.min_harga} - ${item.max_harga} Juta</td>
         <td>Rp ${item.rata_harga} Juta</td>
         <td>${item.jumlah_data} baris</td>
         <td>
-          <button type="button" class="table-btn" data-merek="${escapeHtml(merek)}">
+          <button type="button" class="table-btn" data-merek="${escapeHtml(item.merek)}" data-tipe="${escapeHtml(item.tipe)}">
             Pilih Model
           </button>
         </td>
@@ -104,22 +135,41 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".table-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const targetMerek = e.currentTarget.getAttribute("data-merek");
+        const targetTipe = e.currentTarget.getAttribute("data-tipe");
+        
         merekSelect.value = targetMerek;
-        merekSelect.dispatchEvent(new Event("change"));
+
+        if (metadataCache && metadataCache.kategori_merek) {
+          const availableModels = metadataCache.kategori_merek[targetMerek] || [];
+          tipeSelect.innerHTML = '<option value="" disabled selected>Pilih tipe mobil...</option>';
+          availableModels.forEach((tipe) => {
+            const opt = document.createElement("option");
+            opt.value = tipe;
+            opt.textContent = tipe;
+            tipeSelect.appendChild(opt);
+          });
+          tipeSelect.disabled = false;
+          if (tipeHint) {
+            tipeHint.textContent = `Tersedia ${availableModels.length} tipe mobil untuk merek ${targetMerek}.`;
+          }
+        }
+        tipeSelect.value = targetTipe;
+
         form.scrollIntoView({ behavior: "smooth", block: "start" });
         tahunInput.focus();
       });
     });
   }
 
-  // --- Filter Pencarian Tabel ---
+  // --- Filter Pencarian Tabel (Bisa cari merek atau tipe) ---
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();
       const rows = modelsTbody.querySelectorAll("tr");
       rows.forEach((row) => {
-        const modelName = row.cells[0]?.textContent.toLowerCase() || "";
-        if (modelName.includes(query)) {
+        const brandName = row.cells[0]?.textContent.toLowerCase() || "";
+        const modelName = row.cells[1]?.textContent.toLowerCase() || "";
+        if (brandName.includes(query) || modelName.includes(query)) {
           row.style.display = "";
         } else {
           row.style.display = "none";
@@ -149,13 +199,19 @@ document.addEventListener("DOMContentLoaded", () => {
     hideError();
 
     const merek = merekSelect.value;
+    const tipe = tipeSelect.value;
     const tahun = parseInt(tahunInput.value, 10);
     const km = parseInt(kmInput.value, 10);
 
     // Validasi lokal
     if (!merek) {
-      showError("Silakan pilih merek mobil terlebih dahulu.");
+      showError("Silakan pilih kategori merek pabrikan terlebih dahulu.");
       merekSelect.focus();
+      return;
+    }
+    if (!tipe) {
+      showError("Silakan pilih tipe / model mobil terlebih dahulu.");
+      tipeSelect.focus();
       return;
     }
     if (isNaN(tahun) || tahun < 2010 || tahun > 2025) {
@@ -178,6 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           merek: merek,
+          tipe: tipe,
           tahun: tahun,
           kilometer: km,
         }),
@@ -206,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
     successState.style.display = "block";
 
     badgeMerek.textContent = data.merek;
+    badgeTipe.textContent = data.tipe;
     badgeTahun.textContent = `Tahun ${data.tahun}`;
     badgeKm.textContent = `${formatNumber(data.kilometer)} KM`;
 
@@ -220,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
         item.className = "ref-item";
         item.innerHTML = `
           <div class="ref-specs">
-            <span class="ref-model">${escapeHtml(ref.merek)} (${ref.tahun})</span>
+            <span class="ref-model">${escapeHtml(ref.merek)} ${escapeHtml(ref.tipe)} (${ref.tahun})</span>
             <span class="ref-meta">Odometer: ${formatNumber(ref.kilometer)} KM</span>
           </div>
           <div class="ref-price">${escapeHtml(ref.harga_rupiah)}</div>
