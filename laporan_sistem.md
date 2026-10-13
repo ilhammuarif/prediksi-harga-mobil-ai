@@ -19,7 +19,7 @@ KECERDASAN BUATAN (ARTIFICIAL INTELLIGENCE)
 
 **Arsitektur Agen Cerdas (Kerangka PEAS)**:
 * **Performance Measure**: Rasionalitas dan keakuratan estimasi harga mendekati nilai pasar riil.
-* **Environment**: Pasar sekunder mobil bekas Indonesia (17 tipe model kendaraan terpopuler).
+* **Environment**: Pasar sekunder mobil bekas Indonesia (21 tipe model kendaraan terpopuler).
 * **Actuators**: Antarmuka desktop yang menyajikan taksiran nilai pasar (Rupiah) dan grafik visualisasi sebaran data.
 * **Sensors**: Form masukan pengguna (string merek, integer tahun, dan integer kilometer).
 
@@ -48,16 +48,17 @@ Dataset yang digunakan sebagai basis pengetahuan sistem adalah **100% data riil 
   1. *Normalisasi Harga Tunai (Cash OTR)*: Mengeliminasi listing dengan harga manipulatif (seperti pencantuman nilai Total Down Payment / TDP cicilan murah). Seluruh entri dikonversi murni ke nilai jual beli kontan (On The Road).
   2. *Screening Kondisi Normal*: Mengecualikan kendaraan berstatus *salvage* (bekas tabrakan berat struktur rangka) atau terdampak banjir untuk menjaga integritas nilai pasar wajar (*fair market value*).
   3. *Verifikasi Rasionalitas Odometer*: Memfilter kilometer agar konsisten dengan laju pemakaian normal kendaraan keluarga di Indonesia ($8.000\text{ s.d. }20.000\text{ KM/tahun}$).
-* **Jumlah Data**: **2.000 entri data riil**, mencakup **17 model kendaraan** terpopuler di Indonesia (117 s.d. 118 data per model terdistribusi seimbang dari tahun 2015 s.d. 2023).
+* **Jumlah Data**: **2.500 entri data riil**, mencakup **21 model kendaraan** terpopuler di Indonesia (117 s.d. 125 data per model terdistribusi seimbang dari tahun 2015 s.d. 2023).
 * **Validitas Data**: Setiap baris memuat tahun pembuatan asli, jarak tempuh kilometer aktual dari odometer, dan harga penawaran riil dalam jutaan Rupiah sesuai kondisi pasar pasar otomotif sekunder.
 
-### 17 Tipe Model Berdasarkan Hierarki Pasar Indonesia:
-1. **LCGC & City Car**: Ayla (75-149 Jt), Agya (85-183 Jt), Calya (90-159 Jt), Sigra (92-148 Jt), Brio (98-186 Jt)
-2. **Hatchback**: Jazz (125-280 Jt), Yaris (155-292 Jt)
-3. **Low MPV (Mobil Keluarga)**: Xenia (109-219 Jt), Avanza (115-240 Jt), Ertiga (115-242 Jt), Xpander (177-307 Jt)
-4. **Compact SUV**: Rush (148-253 Jt), HR-V (165-366 Jt)
-5. **Medium SUV & MPV**: CR-V (185-493 Jt), Innova (232-501 Jt)
-6. **Big SUV (Ladder Frame)**: Fortuner (325-600 Jt), Pajero (353-635 Jt)
+### 21 Tipe Model Berdasarkan Hierarki Pasar Indonesia:
+1. **LCGC & City Car**: Ayla (75-151 Jt), Agya (83-185 Jt), Calya (90-159 Jt), Sigra (92-151 Jt), Brio (98-187 Jt)
+2. **Hatchback**: Jazz (125-288 Jt), Yaris (155-298 Jt)
+3. **Low MPV**: Xenia (109-222 Jt), Avanza (115-240 Jt), Ertiga (115-242 Jt), Mobilio (111-195 Jt), Xpander (176-307 Jt)
+4. **Compact MPV**: Sienta (141-230 Jt)
+5. **Compact SUV & Crossover**: Rush (146-272 Jt), Terios (133-238 Jt), BR-V (147-268 Jt), HR-V (165-373 Jt)
+6. **Medium SUV & MPV**: CR-V (185-503 Jt), Innova (232-510 Jt)
+7. **Big SUV (Ladder Frame)**: Fortuner (325-600 Jt), Pajero (353-635 Jt)
 
 ---
 
@@ -73,7 +74,7 @@ Data Mobil123.csv ──> Akuisisi Data ──> Representasi Fitur ──> Induk
 2. **Representasi Fitur (One-Hot Encoding)**: Komputer tidak dapat memproses teks seperti "Avanza" atau "Fortuner". Transformasi ini mengubah string kategori merek menjadi vektor biner (0 dan 1).
 3. **Pemisahan Fitur Masukan (X) dan Target Keputusan (y)**: Memisahkan sensor keadaan (tahun, km, kolom dummy) dari label harga pasar.
 4. **Induksi Model (Training)**: Algoritma Random Forest membangun 100 pohon keputusan secara otonom untuk memetakan hubungan antara usia dan intensitas penggunaan terhadap nilai aset.
-5. **Inferensi & Penyelarasan Kolom (.reindex)**: Memastikan vektor masukan tunggal selalu memiliki dimensi 17 kolom dummy yang identik dengan matriks saat pembelajaran.
+5. **Inferensi & Penyelarasan Kolom (.reindex)**: Memastikan vektor masukan tunggal selalu memiliki dimensi 21 kolom dummy yang identik dengan matriks saat pembelajaran.
 
 ---
 
@@ -104,7 +105,7 @@ $$\text{Estimasi Harga} = \frac{1}{100} \sum_{i=1}^{100} \text{Prediksi Pohon}_i
 **Jawaban**:
 > *"Sistem ini dirancang sebagai agen cerdas dengan kerangka PEAS:
 > 1. **P (Performance)**: Akurasi estimasi harga mendekati nilai pasar riil.
-> 2. **E (Environment)**: Data pasar sekunder mobil bekas Indonesia dari bursa Mobil123.
+> 2. **E (Environment)**: Data pasar sekunder mobil bekas Indonesia dari bursa Mobil123, Carmudi, dan OLX Autos (21 tipe model, 2.500 entri data empiris).
 > 3. **A (Actuator)**: Layar desktop GUI Tkinter yang menampilkan hasil harga dan grafik analisis data.
 > 4. **S (Sensor)**: Form masukan pengguna (merek, tahun, dan kilometer)."*
 
@@ -126,7 +127,7 @@ Prediksi_harga_kendaraan/
 ├── static/                                  ← Berkas antarmuka web (index.html, style.css, app.js)
 ├── run_web.bat                              ← Shortcut otomatis runner server dan pembuka browser
 ├── app.py                                   ← Alternatif kode agen cerdas desktop GUI (Tkinter)
-├── data_mobil.csv                           ← Basis data empiris 2.000 baris Mobil123, Carmudi, & OLX (17 model)
+├── data_mobil.csv                           ← Basis data empiris 2.500 baris Mobil123, Carmudi, & OLX (21 model)
 ├── data_mobil.xlsx                          ← Basis data format Excel rapi untuk inspeksi manual
 ├── requirements.txt                         ← Daftar dependensi pustaka Python
 ├── laporan_sistem.md                        ← Ringkasan teknis proyek & persiapan ujian

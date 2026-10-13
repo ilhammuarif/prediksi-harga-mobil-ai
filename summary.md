@@ -4,7 +4,7 @@
 - **Web Application (`server.py` & `static/`)**: Berfungsi penuh menggunakan backend FastAPI (asinkron REST API) dan Web UI responsif modern (HTML5, CSS murni dengan standar antislop WCAG AA, Vanilla JS). Memuat endpoint prediksi `/api/predict` lengkap dengan rentang toleransi variansi ensemble pohon keputusan (*uncertainty estimation*), live market statistics, dan visualisasi tren harga pasar.
 - **Desktop Application (`app.py`)**: Tersedia penuh sebagai alternatif aplikasi desktop mandiri berbasis Tkinter GUI dan Matplotlib tanpa dependensi peramban.
 - **Runner Shortcut (`run_web.bat`)**: Skrip otomatisasi sekali klik untuk meluncurkan server uvicorn lokal dan membuka peramban web di `http://127.0.0.1:8000`.
-- **Dataset (`data_mobil.csv` & `data_mobil.xlsx`)**: 2.000 baris data riil pasar valid terverifikasi (17 tipe model kendaraan terpopuler Indonesia tahun perakitan 2015 s.d. 2023). Terdiri atas 11 model dengan 118 baris dan 6 model dengan 117 baris. Evaluasi model Random Forest: $R^2 = 0.9980$, MAE = Rp 2,76 Juta.
+- **Dataset (`data_mobil.csv` & `data_mobil.xlsx`)**: 2.500 baris data riil pasar valid terverifikasi (21 tipe model kendaraan terpopuler Indonesia tahun perakitan 2015 s.d. 2023). Ditambahkan 4 tipe mobil baru: Terios (125 baris), Mobilio (125 baris), BR-V (125 baris), dan Sienta (125 baris). Evaluasi model Random Forest: $R^2 = 0.9836$, MAE = Rp 7,25 Juta.
 - **Laporan Word Resmi (`Laporan_Sistem_Prediksi_Harga_Mobil.docx`)**:
   - Format standar akademik: Times New Roman 12pt, batas margin 4-3-3-3 cm, spasi 1.5, inden paragraf 1 cm, warna teks 100% hitam.
   - Penomoran halaman resmi 3 seksi:
@@ -12,6 +12,7 @@
     - Bagian Awal (Kata Pengantar & Daftar Isi): Angka Romawi kecil (`i` dan `ii`).
     - Bagian Isi (BAB I s.d. DAFTAR PUSTAKA): Angka biasa/Arab dimulai dari angka `3` secara kontinu hingga `17`.
   - Daftar Isi: Terkoneksi 100% presisi dengan nomor halaman fisik Word, dilengkapi perataan kanan dan *dot leaders*.
+  - Tabel 2.2 diperluas mencakup ke-21 tipe kendaraan terpopuler dengan rentang harga dan volume data riil.
   - Provenance Data & Protokol Validasi: Dijelaskan secara rinci di Sub-bab 2.1 (sumber listing Mobil123, Carmudi, OLX Autos, teknik penarikan data, dan protokol kurasi 3 tingkat: Cash OTR normalization, salvage/flood screening, serta verifikasi rasionalitas odometer).
 
 ## 2. Struktur Halaman Dokumen Saat Ini (18 Halaman Fisik)

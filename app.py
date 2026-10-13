@@ -110,7 +110,7 @@ tk.Label(
     root, text="Prediksi Harga Mobil Bekas", font=("Arial", 18, "bold")
 ).pack(pady=(15, 5))
 tk.Label(
-    root, text="Sistem Kecerdasan Buatan (17 Tipe Kendaraan, 2.000 Data Pasar)", font=("Arial", 10), fg="gray"
+    root, text="Sistem Kecerdasan Buatan (21 Tipe Kendaraan, 2.500 Data Pasar)", font=("Arial", 10), fg="gray"
 ).pack()
 
 # --- Tabel Merek ---
