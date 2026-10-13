@@ -15,8 +15,8 @@ from sklearn.pipeline import Pipeline
 # Inisialisasi Aplikasi FastAPI
 app = FastAPI(
     title="Sistem Prediksi Harga Mobil Bekas",
-    description="API Inferensi Kecerdasan Buatan menggunakan Random Forest Regressor Berbasis Kategori Merek & Tipe Kendaraan",
-    version="2.1.0"
+    description="API Inferensi Pembelajaran Mesin menggunakan Random Forest Regressor Berbasis Kategori Merek & Tipe Kendaraan",
+    version="2.2.0"
 )
 
 # Konfigurasi CORS
@@ -83,6 +83,19 @@ for t in DAFTAR_TIPE:
         "jumlah_data": int(len(sub)),
     }
 
+# Pre-kalkulasi statistik per kategori merek
+STATS_PER_MEREK: Dict[str, Dict[str, Any]] = {}
+for m in DAFTAR_MEREK:
+    sub_m = df[df["merek"] == m]
+    STATS_PER_MEREK[m] = {
+        "merek": m,
+        "total_model": len(KATEGORI_MEREK[m]),
+        "total_data": int(len(sub_m)),
+        "min_harga": int(sub_m["harga_juta"].min()),
+        "max_harga": int(sub_m["harga_juta"].max()),
+        "rata_harga": round(float(sub_m["harga_juta"].mean()), 1),
+    }
+
 
 class PredictRequest(BaseModel):
     merek: Optional[str] = Field(None, description="Nama merek pabrikan (misal: Toyota, Honda)")
@@ -133,6 +146,7 @@ def get_metadata():
         "daftar_merek": DAFTAR_MEREK,
         "daftar_tipe": DAFTAR_TIPE,
         "kategori_merek": KATEGORI_MEREK,
+        "statistik_merek": STATS_PER_MEREK,
         "statistik_tipe": STATS_PER_TIPE,
         "rentang_tahun": [int(df["tahun"].min()), int(df["tahun"].max())],
     }

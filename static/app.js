@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const priceRange = document.getElementById("price-range");
   const referenceList = document.getElementById("reference-list");
 
-  const modelsTbody = document.getElementById("models-tbody");
+  const catalogAccordion = document.getElementById("catalog-accordion");
   const searchInput = document.getElementById("table-search");
 
   let metadataCache = null;
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const catalogSubtitle = document.getElementById("catalog-subtitle");
       if (catalogSubtitle && data.total_merek && data.total_tipe && data.total_data) {
-        catalogSubtitle.textContent = `Ringkasan ${data.total_merek} kategori merek dan ${data.total_tipe} tipe mobil dalam basis data empiris ${formatNumber(data.total_data)} entri riil.`;
+        catalogSubtitle.textContent = `Katalog ${data.total_merek} kategori merek dan ${data.total_tipe} tipe mobil dalam basis data ${formatNumber(data.total_data)} entri riil. Klik kategori untuk membuka.`;
       }
       const footerSubtext = document.getElementById("footer-subtext");
       if (footerSubtext && data.total_data) {
@@ -77,8 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
         merekSelect.appendChild(opt);
       });
 
-      // Render tabel katalog model
-      renderModelsTable(data.statistik_tipe);
+      // Render katalog model per kategori akordeon (hemat ruang)
+      renderCatalogAccordion(data);
     } catch (err) {
       showError("Koneksi ke backend gagal: " + err.message);
     }
@@ -106,37 +106,116 @@ document.addEventListener("DOMContentLoaded", () => {
     tipeSelect.focus();
   });
 
-  // --- Render Tabel Katalog ---
-  function renderModelsTable(stats) {
-    modelsTbody.innerHTML = "";
-    Object.keys(stats).forEach((tipe) => {
-      const item = stats[tipe];
-      const tr = document.createElement("tr");
+  // --- Render Katalog Akordeon per Kategori Merek (Kompak & Hemat Ruang) ---
+  function renderCatalogAccordion(data) {
+    if (!catalogAccordion) return;
+    catalogAccordion.innerHTML = "";
 
-      tr.innerHTML = `
-        <td><span class="brand-tag">${escapeHtml(item.merek)}</span></td>
-        <td><strong>${escapeHtml(item.tipe)}</strong></td>
-        <td>${item.min_tahun} - ${item.max_tahun}</td>
-        <td>${formatNumber(item.min_km)} - ${formatNumber(item.max_km)} KM</td>
-        <td>Rp ${item.min_harga} - ${item.max_harga} Juta</td>
-        <td>Rp ${item.rata_harga} Juta</td>
-        <td>${item.jumlah_data} baris</td>
-        <td>
-          <button type="button" class="table-btn" data-merek="${escapeHtml(item.merek)}" data-tipe="${escapeHtml(item.tipe)}">
-            Pilih Model
-          </button>
-        </td>
+    const daftarMerek = data.daftar_merek || [];
+    const kategoriMerek = data.kategori_merek || {};
+    const statsMerek = data.statistik_merek || {};
+    const statsTipe = data.statistik_tipe || {};
+
+    daftarMerek.forEach((merek, index) => {
+      const brandStat = statsMerek[merek] || { total_model: 0, total_data: 0, min_harga: 0, max_harga: 0 };
+      const modelList = kategoriMerek[merek] || [];
+
+      const accordionItem = document.createElement("div");
+      accordionItem.className = `brand-accordion-item${index === 0 ? " is-open" : ""}`;
+      accordionItem.setAttribute("data-brand", merek.toLowerCase());
+
+      // Header Akordeon
+      const headerBtn = document.createElement("button");
+      headerBtn.type = "button";
+      headerBtn.className = "brand-accordion-header";
+      headerBtn.setAttribute("aria-expanded", index === 0 ? "true" : "false");
+      headerBtn.innerHTML = `
+        <div class="brand-header-left">
+          <span class="brand-name">${escapeHtml(merek)}</span>
+          <span class="brand-model-count">${brandStat.total_model} Model</span>
+          <span class="brand-data-count">${formatNumber(brandStat.total_data)} Data Riil</span>
+        </div>
+        <div class="brand-header-right">
+          <span class="brand-price-range">Rp ${brandStat.min_harga} - ${brandStat.max_harga} Juta</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
       `;
 
-      modelsTbody.appendChild(tr);
+      // Body Akordeon (Tabel Tipe Mobil di Bawah Merek Terkait)
+      const bodyDiv = document.createElement("div");
+      bodyDiv.className = "brand-accordion-body";
+
+      let rowsHtml = "";
+      modelList.forEach((tipe) => {
+        const item = statsTipe[tipe] || {
+          min_tahun: 2015,
+          max_tahun: 2023,
+          min_km: 10000,
+          max_km: 100000,
+          min_harga: 100,
+          max_harga: 200,
+          rata_harga: 150,
+          jumlah_data: 130
+        };
+
+        rowsHtml += `
+          <tr data-model="${escapeHtml(tipe.toLowerCase())}">
+            <td><strong>${escapeHtml(tipe)}</strong></td>
+            <td>${item.min_tahun} - ${item.max_tahun}</td>
+            <td>${formatNumber(item.min_km)} - ${formatNumber(item.max_km)} KM</td>
+            <td>Rp ${item.min_harga} - ${item.max_harga} Juta</td>
+            <td>Rp ${item.rata_harga} Juta</td>
+            <td>${item.jumlah_data} baris</td>
+            <td>
+              <button type="button" class="table-btn select-model-btn" data-merek="${escapeHtml(merek)}" data-tipe="${escapeHtml(tipe)}">
+                Pilih Model
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      bodyDiv.innerHTML = `
+        <div class="table-responsive">
+          <table class="brand-models-table">
+            <thead>
+              <tr>
+                <th scope="col">Tipe Mobil</th>
+                <th scope="col">Rentang Tahun</th>
+                <th scope="col">Jarak Tempuh</th>
+                <th scope="col">Rentang Pasar</th>
+                <th scope="col">Rata-rata</th>
+                <th scope="col">Sampel</th>
+                <th scope="col">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // Toggle klik pada header
+      headerBtn.addEventListener("click", () => {
+        const isOpen = accordionItem.classList.contains("is-open");
+        accordionItem.classList.toggle("is-open", !isOpen);
+        headerBtn.setAttribute("aria-expanded", !isOpen ? "true" : "false");
+      });
+
+      accordionItem.appendChild(headerBtn);
+      accordionItem.appendChild(bodyDiv);
+      catalogAccordion.appendChild(accordionItem);
     });
 
-    // Pasang listener pada tombol "Pilih Model" di tabel
-    document.querySelectorAll(".table-btn").forEach((btn) => {
+    // Pasang listener pada seluruh tombol "Pilih Model"
+    document.querySelectorAll(".select-model-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const targetMerek = e.currentTarget.getAttribute("data-merek");
         const targetTipe = e.currentTarget.getAttribute("data-tipe");
-        
+
         merekSelect.value = targetMerek;
 
         if (metadataCache && metadataCache.kategori_merek) {
@@ -161,18 +240,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Filter Pencarian Tabel (Bisa cari merek atau tipe) ---
+  // --- Filter Pencarian Akordeon (Cari Merek atau Tipe) ---
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();
-      const rows = modelsTbody.querySelectorAll("tr");
-      rows.forEach((row) => {
-        const brandName = row.cells[0]?.textContent.toLowerCase() || "";
-        const modelName = row.cells[1]?.textContent.toLowerCase() || "";
-        if (brandName.includes(query) || modelName.includes(query)) {
-          row.style.display = "";
+      const accordionItems = document.querySelectorAll(".brand-accordion-item");
+
+      accordionItems.forEach((item) => {
+        const brandName = item.getAttribute("data-brand") || "";
+        const modelRows = item.querySelectorAll("tbody tr");
+        let hasMatchingModel = false;
+
+        modelRows.forEach((row) => {
+          const modelName = row.getAttribute("data-model") || "";
+          if (query === "" || brandName.includes(query) || modelName.includes(query)) {
+            row.style.display = "";
+            hasMatchingModel = true;
+          } else {
+            row.style.display = "none";
+          }
+        });
+
+        if (query === "") {
+          item.style.display = "";
+          // Biarkan item pertama tetap terbuka
+        } else if (hasMatchingModel) {
+          item.style.display = "";
+          item.classList.add("is-open");
+          const header = item.querySelector(".brand-accordion-header");
+          if (header) header.setAttribute("aria-expanded", "true");
         } else {
-          row.style.display = "none";
+          item.style.display = "none";
         }
       });
     });

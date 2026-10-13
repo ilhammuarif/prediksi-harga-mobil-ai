@@ -10,7 +10,7 @@
   <header class="site-header">
     <div class="container header-container">
       <div class="brand">
-        <div class="brand-badge">Kecerdasan Buatan</div>
+        <div class="brand-badge">Pembelajaran Mesin</div>
         <h1 class="brand-title">Prediksi Harga Mobil Bekas</h1>
         <p class="brand-desc">Sistem estimasi nilai pasar berbasis penalaran induktif Random Forest Regressor</p>
       </div>
@@ -188,7 +188,7 @@
         </div>
         <div>
           <h2 class="provenance-title">Catatan Sumber & Protokol Validitas Data Riil</h2>
-          <p class="provenance-subtitle">Transparansi sumber data sekunder pasar otomotif Indonesia yang digunakan oleh agen cerdas AI.</p>
+          <p class="provenance-subtitle">Transparansi sumber data sekunder pasar otomotif Indonesia yang digunakan oleh model Random Forest.</p>
         </div>
       </div>
       <div class="provenance-grid">
@@ -217,13 +217,13 @@
     </div>
   </section>
 
-  <!-- Bagian Bawah: Penjelajah Basis Data -->
+  <!-- Bagian Bawah: Penjelajah Basis Data (Katalog per Kategori Merek) -->
   <section class="container explorer-section">
     <div class="card explorer-card">
       <div class="explorer-header">
         <div>
-          <h2 class="card-title">Katalog Model & Rentang Pasar</h2>
-          <p id="catalog-subtitle" class="card-subtitle">Ringkasan 5 kategori merek dan 21 tipe mobil dalam basis data empiris 2.500 entri riil.</p>
+          <h2 class="card-title">Katalog Model per Kategori Merek</h2>
+          <p id="catalog-subtitle" class="card-subtitle">Klik kategori merek untuk melihat tipe kendaraan dan sebaran data pasarnya.</p>
         </div>
         <div class="search-box">
           <input 
@@ -236,24 +236,9 @@
         </div>
       </div>
 
-      <div class="table-responsive">
-        <table class="data-table" id="models-table">
-          <thead>
-            <tr>
-              <th scope="col">Kategori Merek</th>
-              <th scope="col">Tipe Mobil</th>
-              <th scope="col">Rentang Tahun</th>
-              <th scope="col">Jarak Tempuh (KM)</th>
-              <th scope="col">Rentang Harga Pasar</th>
-              <th scope="col">Rata-rata Harga</th>
-              <th scope="col">Jumlah Sampel</th>
-              <th scope="col">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="models-tbody">
-            <!-- Diisi secara dinamis via JavaScript -->
-          </tbody>
-        </table>
+      <!-- Akordeon Kategori Merek -->
+      <div id="catalog-accordion" class="catalog-accordion">
+        <!-- Diisi secara dinamis via JavaScript -->
       </div>
     </div>
   </section>
@@ -261,14 +246,14 @@
   <footer class="site-footer">
     <div class="container footer-content">
       <p class="footer-text">
-        Tugas Mata Kuliah Kecerdasan Buatan (Artificial Intelligence) - Implementasi Agen Prediktif Mandiri Berbasis Web.
+        Sistem Prediksi Nilai Pasar Kendaraan Sekunder Berbasis Web Menggunakan Algoritma Random Forest Regressor.
       </p>
       <p id="footer-subtext" class="footer-subtext">
-        Sumber Data: Penjelajahan Web Terbuka Listing Otomotif Indonesia (Mobil123.com, Carmudi, OLX Autos) - 2.500 Baris Data Riil.
+        Sumber Data: Penjelajahan Web Terbuka Listing Otomotif Indonesia (Mobil123.com, Carmudi, OLX Autos) - 5.000 Baris Data Riil.
       </p>
     </div>
   </footer>
 
-  <script src="/static/app.js?v=2.3"></script>
+  <script src="/static/app.js?v=2.4"></script>
 </body>
 </html>

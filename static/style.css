@@ -598,6 +598,140 @@ body {
   width: 280px;
 }
 
+/* --- Akordeon Katalog Berdasarkan Kategori Merek --- */
+.catalog-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.brand-accordion-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brand-accordion-item:hover {
+  border-color: #CBD5E1;
+}
+
+.brand-accordion-item.is-open {
+  border-color: var(--color-accent);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.brand-accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background-color: var(--color-surface-subtle);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.brand-accordion-header:hover {
+  background-color: #EEF2F6;
+}
+
+.brand-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.brand-model-count {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  background-color: #EFF6FF;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.brand-data-count {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.brand-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-price-range {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.accordion-chevron {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.brand-accordion-item.is-open .accordion-chevron {
+  transform: rotate(180deg);
+  color: var(--color-accent);
+}
+
+.brand-accordion-body {
+  display: none;
+  padding: 0;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.brand-accordion-item.is-open .brand-accordion-body {
+  display: block;
+}
+
+.brand-models-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.brand-models-table th {
+  background-color: #F8FAFC;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand-models-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-main);
+}
+
+.brand-models-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.brand-models-table tbody tr:hover {
+  background-color: #F8FAFC;
+}
+
 .table-responsive {
   width: 100%;
   overflow-x: auto;

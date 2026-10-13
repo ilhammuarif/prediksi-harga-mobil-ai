@@ -48,15 +48,15 @@ Dataset yang digunakan sebagai basis pengetahuan sistem adalah **100% data riil 
   1. *Normalisasi Harga Tunai (Cash OTR)*: Mengeliminasi listing dengan harga manipulatif (seperti pencantuman nilai Total Down Payment / TDP cicilan murah). Seluruh entri dikonversi murni ke nilai jual beli kontan (On The Road).
   2. *Screening Kondisi Normal*: Mengecualikan kendaraan berstatus *salvage* (bekas tabrakan berat struktur rangka) atau terdampak banjir untuk menjaga integritas nilai pasar wajar (*fair market value*).
   3. *Verifikasi Rasionalitas Odometer*: Memfilter kilometer agar konsisten dengan laju pemakaian normal kendaraan keluarga di Indonesia ($8.000\text{ s.d. }20.000\text{ KM/tahun}$).
-* **Jumlah Data**: **3.000 entri data riil**, mencakup **7 Kategori Merek Pabrikan** dan **26 Tipe Model Kendaraan** terpopuler di Indonesia:
-  1. **Toyota** (950 data, 8 model): Agya, Avanza, Calya, Fortuner, Innova, Rush, Sienta, Yaris
-  2. **Honda** (719 data, 6 model): BR-V, Brio, CR-V, HR-V, Jazz, Mobilio
-  3. **Daihatsu** (478 data, 4 model): Ayla, Sigra, Terios, Xenia
-  4. **Nissan** (300 data, 3 model): Livina, Serena, X-Trail
-  5. **Mitsubishi** (235 data, 2 model): Pajero, Xpander
-  6. **Wuling** (200 data, 2 model): Almaz, Confero
-  7. **Suzuki** (118 data, 1 model): Ertiga
-* **Validitas Data**: Setiap baris memuat kategori merek pabrikan, tipe model spesifik, tahun pembuatan asli, jarak tempuh kilometer aktual dari odometer, dan harga penawaran riil dalam jutaan Rupiah. Evaluasi Random Forest: $R^2 = 0.9870$, MAE = Rp 6,26 Juta.
+* **Jumlah Data**: **5.000 entri data riil**, mencakup **7 Kategori Merek Pabrikan** dan **38 Tipe Model Kendaraan** terpopuler di Indonesia:
+  1. **Toyota** (1.319 data, 10 model): Agya, Avanza, Calya, Fortuner, Innova, Raize, Rush, Sienta, Veloz, Yaris
+  2. **Honda** (1.054 data, 8 model): BR-V, Brio, City Hatchback, CR-V, HR-V, Jazz, Mobilio, WR-V
+  3. **Daihatsu** (790 data, 6 model): Ayla, Rocky, Sigra, Sirion, Terios, Xenia
+  4. **Suzuki** (526 data, 4 model): Baleno, Ertiga, Ignis, XL7
+  5. **Nissan** (526 data, 4 model): Livina, March, Serena, X-Trail
+  6. **Mitsubishi** (393 data, 3 model): Pajero, Xpander, Xpander Cross
+  7. **Wuling** (392 data, 3 model): Almaz, Confero, Cortez
+* **Validitas Data**: Setiap baris memuat kategori merek pabrikan, tipe model spesifik, tahun pembuatan asli, jarak tempuh kilometer aktual dari odometer, dan harga penawaran riil dalam jutaan Rupiah. Evaluasi Random Forest: $R^2 = 0.9986$, MAE = Rp 2,68 Juta.
 
 ---
 
