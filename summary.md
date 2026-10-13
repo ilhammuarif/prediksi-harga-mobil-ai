@@ -36,7 +36,7 @@
 - **Status Cloud Hosting**: **LIVE & ONLINE 100%** di **Vercel** (Hobby Plan Free, 24/7 tanpa server laptop, tanpa kartu kredit).
 - **Keamanan**: Pre-commit hook `lefthook` + `detect-secrets` aktif; `.gitignore` mengecualikan file rahasia.
 - **Artefak Deployment**:
-  - `vercel.json` & `api/index.py`: Menjalankan serverless backend FastAPI dan antarmuka web.
-  - `Dockerfile`, `Procfile`, & `render.yaml`: Kompatibel untuk opsi kontainerisasi multi-platform.
+  - `vercel.json` & `api/index.py`: Menjalankan serverless backend FastAPI dan antarmuka web di Vercel.
   - `.env.example`: Template konfigurasi lingkungan.
+  - Berkas cadangan yang tidak digunakan (`Dockerfile`, `.dockerignore`, `Procfile`, `render.yaml`) telah dibersihkan agar struktur repositori tetap ramping dan minimalis.
 
