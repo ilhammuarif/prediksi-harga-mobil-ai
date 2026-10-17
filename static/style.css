@@ -79,6 +79,13 @@ body {
   gap: 20px;
 }
 
+.brand {
+  flex: 1;
+  min-width: 280px;
+  max-width: 550px;
+  overflow: hidden;
+}
+
 .brand-badge {
   display: inline-block;
   font-size: 0.75rem;
@@ -93,11 +100,13 @@ body {
 }
 
 .brand-title {
+  display: block;
   font-size: 1.65rem;
   font-weight: 800;
   color: var(--color-text-main);
   letter-spacing: -0.02em;
   line-height: 1.25;
+  cursor: default;
 }
 /* Pembungkus luar */
 .running-text-container {
