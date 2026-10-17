@@ -427,3 +427,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Jalankan inisialisasi awal
   loadMetadata();
 });
+
+function tampilkanTanggal() {
+  const waktuSekarang = new Date();
+  const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const tanggalDiformat = waktuSekarang.toLocaleDateString('id-ID', opsi);
+  
+  document.getElementById("tanggal").innerText = tanggalDiformat;
+}
+
+// Jalankan fungsi
+tampilkanTanggal();
